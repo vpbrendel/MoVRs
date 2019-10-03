@@ -788,7 +788,7 @@ if [ $runstep4 == 1 ] ; then
   cut -f 1,2 TOMTOMresults/tomtom.tsv > motifgraph_edgelist
   mv motifgraph_edgelist MCLUSTERresults/
   cd MCLUSTERresults
-  echo "MCLUSTERresults contains results of motif clustering and merging" >> README.txt
+  echo "MCLUSTERresults contains results of motif clustering and merging." >> README.txt
   #extract motif clusters in graph
   echo "python ${installdir}/MoVRs_GetCluster.py -i motifgraph_edgelist -t $minpresence"
   python ${installdir}/MoVRs_GetCluster.py -i motifgraph_edgelist -t $minpresence
@@ -967,23 +967,32 @@ if [ $runstep7 == 1 ] ; then
 
     if [[ $input == 'peakorbedfile' ]] ; then
       echo "annotatePeaks.pl ${workingdir}/$peakorbedfile $genome -m $file $annotatePeaksOptions 2> $logfile 1> $outfile"
-      sem -j $numproc "annotatePeaks.pl ${workingdir}/$peakorbedfile $genome -m $file $annotatePeaksOptions 2> $logfile 1> $outfile; echo done with annotatePeaks.pl for ${file} ...;"
+      annotatePeaks.pl ${workingdir}/$peakorbedfile $genome -m $file $annotatePeaksOptions 2> $logfile 1> $outfile
+      echo "done with annotatePeaks.pl for ${file} ...;"
     fi
 
     if [[ $input == 'fastafile' ]] ; then
-      echo "homer2 find -i $fastafile -m $file -p $numthreads $homer2Options 2> $logfile 1> $outfile"
-      sem -j $numproc "homer2 find -i $fastafile -m $file -p $numthreads $homer2Options 2> $logfile 1> $outfile; echo done with homer2 for ${file} ...;"
+      posoutfile=${outfile/.tab/pos.tab}
+      poslogfile=${logfile/log/poslog}
+      echo "homer2 find -i $fastafile -m $file -p $numthreads $homer2Options 2> $logfile 1> $posoutfile"
+      homer2 find -i $fastafile -m $file -p $numthreads $homer2Options 2> $poslogfile 1> $posoutfile
+      echo "done with homer2 for ${file} ...;"
+      negoutfile=${outfile/.tab/neg.tab}
+      neglogfile=${logfile/log/neglog}
+      echo "homer2 find -i $backgroundfile -m $file -p $numthreads $homer2Options 2> $neglogfile 1> $negoutfile"
+      homer2 find -i $backgroundfile -m $file -p $numthreads $homer2Options 2> $neglogfile 1> $negoutfile
+      echo "done with homer2 for ${file} ...;"
     fi
 
     if [[ $input == 'geneIDfile' ]] ; then
       echo "annotatePeaks.pl tss $genomeID -list ${workingdir}/$geneIDfile -m $file $annotatePeaksOptions 2> $logfile 1> $outfile"
-      sem -j $numproc "annotatePeaks.pl tss $genomeID -list ${workingdir}/$geneIDfile -m $file $annotatePeaksOptions 2> $logfile 1> $outfile; echo done with annotatePeaks.pl for ${file} ...;"
+      annotatePeaks.pl tss $genomeID -list ${workingdir}/$geneIDfile -m $file $annotatePeaksOptions 2> $logfile 1> $outfile
+      echo "done with annotatePeaks.pl for ${file} ...;"
     fi
 
   done
-  sem --wait
 
-  \mv ANNOTATIONlogfile* LogfileDir/
+  \mv ANNOTATION*logfile* LogfileDir/
   cd ..
   echo ""
   echo "================================================================================"

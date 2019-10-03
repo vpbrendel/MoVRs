@@ -14,7 +14,7 @@ motif2meme <- function(inFile,outFile) {
   total.len <-  length(motif.file)
   #print(n.motifs)
   sink(thisFile,append=TRUE)
-  cat("MEME version 4\n\n",file=thisFile,append=TRUE)
+  cat("MEME version 5\n\n",file=thisFile,append=TRUE)
   cat("ALPHABET= ACGT\n\n",file=thisFile,append=TRUE)
   cat("strands: + -\n\n")
   nameSplit <- strsplit(fileName,"_")
@@ -83,7 +83,7 @@ motif2meme <- function(inFile,outFile) {
   cat("\n",file=thisFile, append=TRUE)
   sink()
   close(thisFile) 
-  cat("... done converting from HOMER to MEME motif format")
+  cat("... done converting from HOMER to MEME motif format\n")
 }
 
 #parse command line argument and run this function
